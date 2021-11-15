@@ -1,5 +1,6 @@
+import hexToBinary from 'hex-to-binary';
 import Block from './block.js'
-import { GENESIS_DATA, MINE_RATE } from './cogfig.js';
+import { GENESIS_DATA, MINE_RATE } from './config.js';
 import cryptoHash from './crypto-hash.js';
 
 describe('Block', () => {
@@ -59,7 +60,7 @@ describe('Block', () => {
         });
         
         it('sets a `hash` that matches the difficulty criteria', () => {
-            expect(minedBlock.hash.substring(0, minedBlock.difficulty))
+            expect(hexToBinary(minedBlock.hash).substring(0, minedBlock.difficulty))
                 .toEqual('0'.repeat(minedBlock.difficulty));
         });
 

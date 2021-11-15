@@ -1,6 +1,7 @@
 import Blockchain from './blockchain.js';
 import Block from './block.js';
 import {jest} from '@jest/globals'
+import cryptoHash from './crypto-hash.js';
 
 describe('Blockchain', () => {
     let blockchain, newChain, originalChain;
@@ -36,7 +37,7 @@ describe('Blockchain', () => {
             });
         });
         
-        describe('when the chain statrts with a genesis block and has nultiple blocks', () => {
+        describe('when the chain statrts with a genesis block and has multiple blocks', () => {
 
             beforeEach(() => {
                 blockchain.addBlock({ data: 'Bears' });
@@ -57,6 +58,25 @@ describe('Blockchain', () => {
                 it('returns false', () => {
                     
                     blockchain.chain[2].data = 'some-bad-and-evil-data';
+
+                    expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
+                });
+            });
+            
+            describe('and the chain contains a block with jumped difficulty', () => {
+                it('returns false', () => {
+                    const lastBlock = blockchain.chain[blockchain.chain.length-1];
+                    const lastHash = lastBlock.hash;
+                    const timestamp = Date.now();
+                    const nonce = 0;
+                    const data = [];
+                    const difficulty = lastBlock.difficulty - 3;
+                    
+                    const hash = cryptoHash(timestamp, lastHash, difficulty, nonce, data);
+                    
+                    const badBlock = new Block({ timestamp, lastHash, hash, nonce, difficulty, data });
+                    
+                    blockchain.chain.push(badBlock);
 
                     expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
                 });
