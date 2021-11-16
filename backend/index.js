@@ -1,7 +1,7 @@
 import express from "express";
 import got from 'got';
-import Blockchain from './blockchain.js';
-import PubSub from "./pubsub.js";
+import Blockchain from './app/blockchain/index.js';
+import PubSub from "./app/pubsub.js";
 
 const app = express();
 const blockchain = new Blockchain();
