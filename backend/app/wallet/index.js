@@ -1,6 +1,5 @@
 import { STARTING_BALANCE } from "../../config.js";
-import cryptoHash from "../../utils/crypto-hash.js";
-import { ec } from "../../utils/index.js";
+import { ec, cryptoHash } from "../../utils/index.js";
 
 class Wallet {
     constructor() {

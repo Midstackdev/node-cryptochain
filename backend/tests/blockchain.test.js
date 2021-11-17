@@ -1,7 +1,7 @@
 import Blockchain from '../app/blockchain/index.js';
 import Block from '../app/block/index.js';
 import {jest} from '@jest/globals'
-import cryptoHash from '../utils/crypto-hash.js';
+import { cryptoHash } from '../utils/index.js';
 
 describe('Blockchain', () => {
     let blockchain, newChain, originalChain;

@@ -13,5 +13,6 @@ const verifySignature = ({ publicKey, data, signature }) => {
 
 export {
     ec,
-    verifySignature
+    verifySignature,
+    cryptoHash
 }
