@@ -1,4 +1,4 @@
-import Blockchain from "../app/bockchain/index.js";
+import Blockchain from "../app/blockchain/index.js";
 
 const blockchain = new Blockchain();
 
