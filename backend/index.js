@@ -58,13 +58,19 @@ app.get('/api/transaction-pool-map', (req, res) => {
     res.json(transactionPool.transactionMap);
 });
 
-const syncChains = async() => {
+const syncWithRootState = async() => {
     try {
 		const response = await got(`${ROOT_NODE_ADDRESS}/api/blocks`);
 		const rootChain = JSON.parse(response.body);
 
+		const responsePool = await got(`${ROOT_NODE_ADDRESS}/api/transaction-pool-map`);
+		const rootTransactionPoolMap = JSON.parse(responsePool.body);
+
 		console.log('replace chain on async with ', rootChain);
 		blockchain.replaceChain(rootChain);
+
+		console.log('replace transaction pool map on async with ', rootTransactionPoolMap);
+        transactionPool.setMap(rootTransactionPoolMap);
 	} catch (error) {
 		console.log(error.response.body);
 		//=> 'Internal server error ...'
@@ -84,6 +90,6 @@ app.listen(PORT, () => {
     console.log(`listening on port: ${PORT}`)
     
     if(PORT !== DEFAULT_PORT) {
-        syncChains();
+        syncWithRootState();
     }
 });
