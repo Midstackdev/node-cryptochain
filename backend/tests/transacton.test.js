@@ -2,6 +2,7 @@ import {jest} from '@jest/globals';
 import Transaction from '../app/wallet/transaction.js';
 import Wallet from '../app/wallet/index.js';
 import { verifySignature } from '../utils/index.js';
+import { MINING_REWARD, REWARD_INPUT } from '../config.js';
 
 describe('Transaction', () => {
     let transaction, senderWallet, recipient, amount;
@@ -172,5 +173,22 @@ describe('Transaction', () => {
             });
         });
 
+    });
+    
+    describe('rewardTransaction()', () => {
+        let rewardTransaction, minerWallet;
+
+        beforeEach(() => {
+            minerWallet = new Wallet();
+            rewardTransaction = Transaction.rewardTransaction({ minerWallet });
+        });
+
+        it('creates a transaction with the reward input', () => {
+            expect(rewardTransaction.input).toEqual(REWARD_INPUT);
+        });
+        
+        it('creates one transaction for the miner with the `MINING_REWARD`', () => {
+            expect(rewardTransaction.outputMap[minerWallet.publicKey]).toEqual(MINING_REWARD);
+        });
     });
 });

@@ -2,6 +2,7 @@ import {jest} from '@jest/globals';
 import TransactionPool from '../app/wallet/transaction-pool.js';
 import Transaction from '../app/wallet/transaction.js';
 import Wallet from '../app/wallet/index.js';
+import Blockchain from '../app/blockchain/index.js';
 
 describe('TransactionPool', () => {
     let transactionPool, transaction, senderWallet;
@@ -70,6 +71,39 @@ describe('TransactionPool', () => {
         it('logs errors for the valid transaction', () => {
             transactionPool.validTransactions();
             expect(errorMock).toHaveBeenCalled();
+        });
+    });
+
+    describe('clear()', () => {
+        it('clears the transactions', () => {
+            transactionPool.clear();
+
+            expect(transactionPool.transactionMap).toEqual({})
+        });
+    });
+    
+    describe('clearBlockChainTransactions()', () => {
+        it('clears the pool of any existing blockchain transactions', () => {
+            const blockchain = new Blockchain();
+            const expectedTransactionMap = {};
+
+            for (let i = 0; i < 6; i++) {
+                const transaction = new Wallet().createTransaction({
+                    recipient: 'foo', amount: 20
+                });
+
+                transactionPool.setTransaction(transaction);
+
+                if(i%2===0) {
+                    blockchain.addBlock({ data: [transaction] });
+                }else {
+                    expectedTransactionMap[transaction.id] = transaction
+                }
+            }
+            
+            transactionPool.clearBlockChainTransactions({ chain: blockchain.chain });
+
+            expect(transactionPool.transactionMap).toEqual(expectedTransactionMap);
         });
     });
 });
