@@ -1,5 +1,7 @@
 import Block from '../block/index.js';
 import { cryptoHash } from '../../utils/index.js';
+import { MINING_REWARD, REWARD_INPUT } from '../../config.js';
+import Transaction from '../wallet/transaction.js';
 
 class Blockchain {
     constructor() {
@@ -29,6 +31,34 @@ class Blockchain {
         if (onSuccess) onSuccess();
         console.log('replacing chain with', chain);
         this.chain = chain;
+    }
+
+    validTransactionData({ chain }) {
+        for(let i=1; i<chain.length; i++) {
+            const block = chain[i];
+            let rewardTransactionCount = 0;
+
+            for (let transaction of block.data) {
+                if(transaction.input.address === REWARD_INPUT.address) {
+                    rewardTransactionCount += 1;
+
+                    if(rewardTransactionCount > 1) {
+                        console.error('Miner reward exceed limit');
+                        return false;
+                    }
+                    if(Object.values(transaction.outputMap)[0] !== MINING_REWARD) {
+                        console.error('Miner reward amount is invalid');
+                        return false;
+                    }
+                }else {
+                    if(!Transaction.validTransaction(transaction)) {
+                        console.error('Invalid transaction');
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     static isValidChain(chain) {
