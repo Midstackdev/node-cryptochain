@@ -2,6 +2,7 @@ import Block from '../block/index.js';
 import { cryptoHash } from '../../utils/index.js';
 import { MINING_REWARD, REWARD_INPUT } from '../../config.js';
 import Transaction from '../wallet/transaction.js';
+import Wallet from '../wallet/index.js';
 
 class Blockchain {
     constructor() {
@@ -53,6 +54,16 @@ class Blockchain {
                 }else {
                     if(!Transaction.validTransaction(transaction)) {
                         console.error('Invalid transaction');
+                        return false;
+                    }
+                    
+                    const trueBalance = Wallet.calculateBalance({
+                        chain: this.chain,
+                        address: transaction.input.address
+                    });
+
+                    if(transaction.input.amount !== trueBalance) {
+                        console.error('Invalid input amount');
                         return false;
                     }
                 }
